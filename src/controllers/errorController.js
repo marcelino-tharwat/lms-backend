@@ -1,26 +1,44 @@
+import AppError from '../utils/appError.js';
+
 const sendErrorDev = (error, res) => {
   res
     .status(error.statusCode)
-    .josn({ status: error.status, message: error.message, error, stack: error.stack });
+    .json({ status: error.status, message: error.message, error, stack: error.stack });
 };
 
 const sendErrorProd = (error, res) => {
   if (error.isOperational) {
-    res.status(error.statusCode).josn({ status: error.status, message: error.message });
+    res.status(error.statusCode).json({ status: error.status, message: error.message });
   } else {
-    res.status(500).josn({ status: 'error', message: 'Something went very wrong' });
+    res.status(500).json({ status: 'error', message: 'Something went very wrong' });
   }
+};
+
+const handleDuplicateError = error => {
+  const field = Object.keys(error.keyValue)[0];
+  const value = error.keyValue[field];
+  const message = `${field}: "${value}" already exists, please use another value!`;
+  return new AppError(message, 400);
+};
+
+const handleCastError = error => {
+  const message = `Invalid ${error.path} : ${error.value}`;
+  return new AppError(message, 400);
 };
 
 export default (error, req, res, _next) => {
   error.statusCode = error.statusCode || 500;
   error.status = error.status || 'error';
 
-  if ((process.env.NODE_ENV = 'development')) {
-    sendErrorDev(error, res);
+  if (process.env.NODE_ENV === 'development') {
+    return sendErrorDev(error, res);
   }
 
-  if ((process.env.NODE_ENV = 'production')) {
+  if (process.env.NODE_ENV === 'production') {
+    console.error(error.name);
+    if (error.code === 11000) error = handleDuplicateError(error);
+    if (error.name === 'CastError') error = handleCastError(error);
+
     sendErrorProd(error, res);
   }
 };

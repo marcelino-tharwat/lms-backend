@@ -8,6 +8,10 @@ const categorySchema = new mongoose.Schema({
   },
 });
 
+categorySchema.pre(/^find/, function () {
+  this.select('-__v');
+});
+
 const Category = mongoose.model('Category', categorySchema);
 
 export default Category;
