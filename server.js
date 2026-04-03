@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-import app from './app.js';
 dotenv.config({ path: './config.env' });
+const { default: app } = await import('./app.js');
 
 const db = process.env.MONGODB.replace('<PASSWORD>', process.env.MONGODB_PASSWORD);
 
