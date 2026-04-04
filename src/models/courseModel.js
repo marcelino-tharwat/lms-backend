@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const courseShema = new mongoose.Schema({
   title: {
     type: String,
-    reqiured: [true, 'A course must have a title'],
+    required: [true, 'A course must have a title'],
     unique: true,
     trim: true,
     maxlength: [40, 'A course name must have less or equal then 40 characters'],
@@ -16,7 +16,7 @@ const courseShema = new mongoose.Schema({
   ratingsAverage: {
     type: Number,
     default: 0,
-    min: [1, 'Rating must be above 1.0'],
+    min: [0, 'Rating must be above 1.0'],
     max: [5, 'Rating must be below 5.0'],
   },
   ratingsQuantity: {
@@ -50,6 +50,10 @@ const courseShema = new mongoose.Schema({
     default: Date.now(),
     select: false,
   },
+});
+
+courseShema.pre(/^find/, function () {
+  this.select('-__v').populate({ path: 'category', select: '-__v -_id' });
 });
 
 const Course = mongoose.model('Course', courseShema);

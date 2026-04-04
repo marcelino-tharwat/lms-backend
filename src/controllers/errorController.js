@@ -26,6 +26,12 @@ const handleCastError = error => {
   return new AppError(message, 400);
 };
 
+const handleValidationError = error => {
+  const errosList = Object.values(error.errors).map(err => err.message);
+  const message = `Invalid input data: ${errosList.join('. ')}`;
+  return new AppError(message, 400);
+};
+
 export default (error, req, res, _next) => {
   error.statusCode = error.statusCode || 500;
   error.status = error.status || 'error';
@@ -35,9 +41,10 @@ export default (error, req, res, _next) => {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    console.error(error.name);
+    // console.error(error);
     if (error.code === 11000) error = handleDuplicateError(error);
     if (error.name === 'CastError') error = handleCastError(error);
+    if (error.name === 'ValidationError') error = handleValidationError(error);
 
     sendErrorProd(error, res);
   }
