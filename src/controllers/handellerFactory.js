@@ -1,5 +1,6 @@
 import AppError from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
+import { ApiFeature } from '../utils/apiFeature.js';
 
 export const createOne = Model => {
   return catchAsync(async (req, res, _next) => {
@@ -26,10 +27,11 @@ export const getOne = Model => {
 };
 
 export const getAll = Model => {
-  return catchAsync(async (req, res, next) => {
-    const doc = await Model.find();
+  return catchAsync(async (req, res, _next) => {
+    const feature = new ApiFeature(Model.find(), req.query).filter().sort().fields().pagination();
+    const doc = await feature.query;
 
-    res.status(200).json({ status: 'success', data: { doc: doc } });
+    res.status(200).json({ status: 'success', results: doc.length, data: { doc: doc } });
   });
 };
 
