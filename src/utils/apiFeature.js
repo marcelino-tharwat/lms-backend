@@ -1,14 +1,30 @@
+import mongoose from 'mongoose';
+import Category from '../models/categoryModel.js';
 export class ApiFeature {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
   }
 
-  filter() {
+  async filter() {
     console.log(this.queryString);
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
+
+    // === خاص بـ category ===
+    if (queryObj.category && !mongoose.Types.ObjectId.isValid(queryObj.category)) {
+      // يعني المستخدم بعت اسم التصنيف (مثل "Programming")
+      const category = await Category.findOne({ name: queryObj.category });
+
+      if (category) {
+        queryObj.category = category._id; // نحوله للـ ID
+      } else {
+        // لو التصنيف مش موجود، نرجع نتيجة فاضية
+        this.query = this.query.find({ _id: null });
+        return this;
+      }
+    }
 
     let queryStr = JSON.stringify(queryObj);
 

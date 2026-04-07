@@ -9,10 +9,11 @@ export const createOne = Model => {
   });
 };
 
-export const getOne = Model => {
+export const getOne = (Model, popOption) => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findById(req.params.id);
-
+    let query = await Model.findById(req.params.id);
+    if (popOption) query = query.populate(popOption);
+    const doc = await query;
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
@@ -28,7 +29,9 @@ export const getOne = Model => {
 
 export const getAll = Model => {
   return catchAsync(async (req, res, _next) => {
-    const feature = new ApiFeature(Model.find(), req.query).filter().sort().fields().pagination();
+    const feature = new ApiFeature(Model.find(), req.query);
+    await feature.filter();
+    feature.sort().fields().pagination();
     const doc = await feature.query;
 
     res.status(200).json({ status: 'success', results: doc.length, data: { doc: doc } });

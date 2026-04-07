@@ -25,7 +25,7 @@ export const filterCourseBody = (req, res, next) => {
 };
 
 export const getAllcourses = handellerFactory.getAll(Course);
-export const getCourse = handellerFactory.getOne(Course);
+export const getCourse = handellerFactory.getOne(Course, { path: 'lessons' });
 export const createCourse = handellerFactory.createOne(Course);
 export const updateCourse = handellerFactory.updateOne(Course);
 export const deleteCourse = handellerFactory.deleteOne(Course);
