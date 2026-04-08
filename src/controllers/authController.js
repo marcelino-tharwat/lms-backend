@@ -106,5 +106,5 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   currentUser.passwordConfirm = req.body.newPasswordConfirm;
   await currentUser.save();
 
-  creatSendToken(currentUser, 200, res);
+  creatSendToken(currentUser, res, 200);
 });

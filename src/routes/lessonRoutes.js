@@ -1,14 +1,36 @@
 import express from 'express';
 import * as lessonController from '../controllers/lessonController.js';
+import * as authController from '../controllers/authController.js';
+import { createLessonValidator, updateLessonValidator } from '../validators/lessonValidator.js';
+import { idParamValidator } from '../validators/idParamValidator.js';
 
 const lessonRouter = express.Router();
 
-lessonRouter.route('/').get(lessonController.getAllLesson).post(lessonController.createLesson);
+lessonRouter
+  .route('/')
+  .get(lessonController.getAllLesson)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'instructor'),
+    createLessonValidator,
+    lessonController.createLesson
+  );
 
 lessonRouter
   .route('/:id')
-  .get(lessonController.getLesson)
-  .patch(lessonController.updateLesson)
-  .delete(lessonController.deleteLesson);
+  .get(idParamValidator, lessonController.getLesson)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'instructor'),
+    idParamValidator,
+    updateLessonValidator,
+    lessonController.updateLesson
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin', 'instructor'),
+    idParamValidator,
+    lessonController.deleteLesson
+  );
 
 export default lessonRouter;
