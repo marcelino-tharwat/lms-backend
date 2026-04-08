@@ -5,13 +5,25 @@ const categoryRouter = express.Router();
 
 categoryRouter
   .route('/')
-  .get(authController.protect, categoryController.getAllCategory)
-  .post(categoryController.createCategory);
+  .get(categoryController.getAllCategory)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin'),
+    categoryController.createCategory
+  );
 
 categoryRouter
   .route('/:id')
   .get(categoryController.getCategory)
-  .patch(categoryController.updateCategory)
-  .delete(categoryController.deleteCategory);
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin'),
+    categoryController.updateCategory
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin'),
+    categoryController.deleteCategory
+  );
 
 export default categoryRouter;
