@@ -1,10 +1,11 @@
 import express from 'express';
 import * as categoryController from '../controllers/categoryController.js';
+import * as authController from '../controllers/authController.js';
 const categoryRouter = express.Router();
 
 categoryRouter
   .route('/')
-  .get(categoryController.getAllCategory)
+  .get(authController.protect, categoryController.getAllCategory)
   .post(categoryController.createCategory);
 
 categoryRouter
