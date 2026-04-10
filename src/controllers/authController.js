@@ -3,6 +3,8 @@ import catchAsync from '../utils/catchAsync.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import { promisify } from 'util';
+import sendEmail from '../utils/sendEmail.js';
+import crypto from 'crypto';
 
 const signToken = id => {
   return JWT.sign({ id: id }, process.env.JWT_SECRET, {
@@ -107,4 +109,125 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   await currentUser.save();
 
   creatSendToken(currentUser, res, 200);
+});
+
+// @desc    Forgot password
+// @route   POST /api/v1/auth/forgotPassword
+// @access  Public
+export const forgotPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user by email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError(`There is no user with that email ${req.body.email}`, 404));
+  }
+  // 2) If user exist, Generate hash reset random 6 digits and save it in db
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedResetCode = crypto.createHash('sha256').update(resetCode).digest('hex');
+
+  // Save hashed password reset code into db
+  user.passwordResetCode = hashedResetCode;
+  // Add expiration time for password reset code (10 min)
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  user.passwordResetVerified = false;
+
+  await user.save({ validateBeforeSave: false });
+
+  // 3) Send the reset code via email
+  const message = `Hi ${user.name},\n We received a request to reset the password on your LMS Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The LMS Team`;
+  try {
+    const html = `
+<div style="background-color: #f3f2ef; padding: 20px; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+        <div style="padding: 24px;">
+            <h2 style="color: #000000; font-size: 24px; font-weight: 600; margin-bottom: 16px;">LMS Account</h2>
+            <p style="font-size: 16px; color: rgba(0,0,0,0.9); line-height: 1.5;">Hi ${user.name},</p>
+            <p style="font-size: 16px; color: rgba(0,0,0,0.9); line-height: 1.5;">We received a request to reset the password on your account. Use the code below to complete the process:</p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+                <div style="display: inline-block; background-color: #f8faff; border: 1px dashed #0a66c2; padding: 16px 32px; border-radius: 4px;">
+                    <span style="font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #0a66c2;">${resetCode}</span>
+                </div>
+                <p style="font-size: 14px; color: rgba(0,0,0,0.6); margin-top: 12px;">This code is valid for 10 minutes.</p>
+            </div>
+
+            <p style="font-size: 16px; color: rgba(0,0,0,0.9); line-height: 1.5;">If you didn't request this, you can safely ignore this email.</p>
+            
+            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;">
+            
+            <p style="font-size: 14px; color: rgba(0,0,0,0.6);">Thanks for helping us keep your account secure.<br><strong>The LMS Team</strong></p>
+        </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: rgba(0,0,0,0.6);">
+        © 2026 LMS App, Assiut, Egypt.
+    </div>
+</div>
+`;
+
+    await sendEmail({
+      email: user.email,
+      subject: 'Your password reset code (valid for 10 min)',
+      message,
+      html,
+    });
+  } catch (err) {
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetVerified = undefined;
+
+    await user.save({ validateBeforeSave: false });
+    // 'There is an error in sending email'
+    return next(new AppError(err, 500));
+  }
+
+  res.status(200).json({ status: 'Success', message: 'Reset code sent to email' });
+});
+
+// @desc    Verify password reset code
+// @route   POST /api/v1/auth/verifyResetCode
+// @access  Public
+export const verifyPassResetCode = catchAsync(async (req, res, next) => {
+  // 1) Get user based on reset code
+  const hashedResetCode = crypto.createHash('sha256').update(req.body.resetCode).digest('hex');
+
+  const user = await User.findOne({
+    passwordResetCode: hashedResetCode,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new AppError('Reset code invalid or expired'));
+  }
+
+  // 2) Reset code valid
+  user.passwordResetVerified = true;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'Success',
+  });
+});
+
+// @desc    Reset password
+// @route   POST /api/v1/auth/resetPassword
+// @access  Public
+export const resetPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user based on email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError(`There is no user with email ${req.body.email}`, 404));
+  }
+
+  // 2) Check if reset code verified
+  if (!user.passwordResetVerified) {
+    return next(new AppError('Reset code not verified', 400));
+  }
+
+  user.password = req.body.newPassword;
+  user.passwordResetCode = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetVerified = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
+  // 3) if everything is ok, generate token
+  creatSendToken(user._id, res, 200);
 });

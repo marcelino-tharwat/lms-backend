@@ -14,6 +14,10 @@ const userRouter = express.Router();
 userRouter.route('/signup').post(signupValidator, authController.signup);
 userRouter.route('/login').post(loginValidator, authController.login);
 
+userRouter.route('/forgotPassword').post(authController.forgotPassword);
+userRouter.route('/verifyPassResetCode').post(authController.verifyPassResetCode);
+userRouter.route('/resetPassword').post(authController.resetPassword);
+
 userRouter.use(authController.protect);
 
 userRouter.route('/updateMyPassword').patch(updatePasswordValidator, authController.updatePassword);
