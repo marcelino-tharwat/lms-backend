@@ -3,8 +3,11 @@ import * as courseController from './../controllers/courseController.js';
 import * as authController from './../controllers/authController.js';
 import { createCourseValidator, updateCourseValidator } from '../validators/courseValidator.js';
 import { idParamValidator } from '../validators/idParamValidator.js';
+import reivewRouter from './reviewRoutes.js';
 
 const courseRouter = express.Router();
+
+courseRouter.use('/:courseId/review', reivewRouter);
 
 courseRouter
   .route('/')

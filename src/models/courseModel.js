@@ -19,6 +19,7 @@ const courseShema = new mongoose.Schema(
       default: 0,
       min: [0, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
+      set: val => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -60,6 +61,12 @@ const courseShema = new mongoose.Schema(
 
 courseShema.virtual('lessons', {
   ref: 'Lesson',
+  localField: '_id',
+  foreignField: 'course',
+});
+
+courseShema.virtual('reviews', {
+  ref: 'Review',
   localField: '_id',
   foreignField: 'course',
 });
