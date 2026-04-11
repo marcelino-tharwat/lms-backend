@@ -13,6 +13,8 @@ const userRouter = express.Router();
 
 userRouter.route('/signup').post(signupValidator, authController.signup);
 userRouter.route('/login').post(loginValidator, authController.login);
+userRouter.route('/logout').post(authController.logout);
+userRouter.route('/refresh').post(authController.refresh);
 
 userRouter.route('/forgotPassword').post(authController.forgotPassword);
 userRouter.route('/verifyPassResetCode').post(authController.verifyPassResetCode);

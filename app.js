@@ -1,6 +1,7 @@
 import express from 'express';
 // import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import courseRouter from './src/routes/courseRoutes.js';
 import categoryRouter from './src/routes/categoryRoutes.js';
 import lessonRouter from './src/routes/lessonRoutes.js';
@@ -15,6 +16,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // app.use(cors());
 // app.enable('trust proxy');
 app.use(express.json());
+app.use(cookieParser());
 
 // routes
 app.use('/api/courses', courseRouter);
