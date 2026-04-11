@@ -11,7 +11,7 @@ export const createOne = Model => {
 
 export const getOne = (Model, popOption) => {
   return catchAsync(async (req, res, next) => {
-    let query = await Model.findById(req.params.id);
+    let query = Model.findById(req.params.id);
     if (popOption) query = query.populate(popOption);
     const doc = await query;
     if (!doc) {

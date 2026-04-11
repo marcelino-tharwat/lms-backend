@@ -20,12 +20,12 @@ userRouter.route('/resetPassword').post(authController.resetPassword);
 
 userRouter.use(authController.protect);
 
+userRouter.route('/getMe').get(userController.getLoggedUser, userController.getUser);
 userRouter.route('/updateMyPassword').patch(updatePasswordValidator, authController.updatePassword);
-
 userRouter.route('/updateMy').patch(updateMeValidator, userController.updateMy);
-
 userRouter.route('/deleteMe').delete(userController.deleteMe);
 
+// admin
 userRouter.use(authController.restrictTo('admin'));
 
 userRouter.route('/').get(userController.getAllUser).post(userController.createUser);

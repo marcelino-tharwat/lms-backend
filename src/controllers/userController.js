@@ -11,6 +11,11 @@ const filterBody = (objBody, ...allowedeProp) => {
   return newObj;
 };
 
+export const getLoggedUser = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 export const updateMy = catchAsync(async (req, res, next) => {
   if (
     req.body.password ||
