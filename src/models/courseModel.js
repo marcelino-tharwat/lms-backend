@@ -30,6 +30,11 @@ const courseShema = new mongoose.Schema(
       ref: 'Category',
       required: [true, 'Course must belong to a category'],
     },
+    instructor: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Course must belong to an instructor'],
+    },
     level: {
       type: String,
       required: [true, 'A course must have a level'],

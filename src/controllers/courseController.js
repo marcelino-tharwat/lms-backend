@@ -10,6 +10,7 @@ export const filterCourseBody = (req, res, next) => {
     'level',
     'imageCover',
     'duration',
+    'instructor',
   ];
 
   const filteredBody = {};
