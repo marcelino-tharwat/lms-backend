@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Course from './courseModel.js';
 
 const lessonShema = mongoose.Schema({
   title: {
@@ -24,6 +25,46 @@ const lessonShema = mongoose.Schema({
     ref: 'Course',
     required: [true, 'Lesson must belong to a course'],
   },
+});
+
+lessonShema.statics.calcLessonsCount = async function (courseId) {
+  const stats = await this.aggregate([
+    {
+      $match: { course: courseId },
+    },
+    {
+      $group: {
+        _id: '$course',
+        nRating: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (stats.length > 0) {
+    await Course.findByIdAndUpdate(courseId, {
+      lessonsCount: stats[0].nRating,
+    });
+  } else {
+    await Course.findByIdAndUpdate(courseId, {
+      lessonsCount: 0,
+    });
+  }
+};
+
+lessonShema.post('save', function () {
+  this.constructor.calcLessonsCount(this.course);
+});
+
+// Befor DB
+lessonShema.pre(/^findOneAnd/, async function () {
+  // get review by id before arrive DB
+  this.r = await this.findOne();
+});
+
+lessonShema.post(/^findOneAnd/, async function () {
+  if (this.r) {
+    await this.r.constructor.calcLessonsCount(this.r.course);
+  }
 });
 
 const Lesson = mongoose.model('Lesson', lessonShema);

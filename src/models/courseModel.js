@@ -25,6 +25,10 @@ const courseShema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    lessonsCount: {
+      type: Number,
+      default: 0,
+    },
     category: {
       type: mongoose.Schema.ObjectId,
       ref: 'Category',
