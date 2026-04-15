@@ -6,6 +6,7 @@ import courseRouter from './src/routes/courseRoutes.js';
 import categoryRouter from './src/routes/categoryRoutes.js';
 import lessonRouter from './src/routes/lessonRoutes.js';
 import enrollmentRouter from './src/routes/enrollmentRoutes.js';
+import lessonProgress from './src/routes/lessonProgressRoutes.js';
 import userRouter from './src/routes/userRoutes.js';
 import globalErrorHandeler from './src/controllers/errorController.js';
 import AppError from './src/utils/appError.js';
@@ -24,6 +25,7 @@ app.use('/api/courses', courseRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/lessons', lessonRouter);
 app.use('/api/enrollments', enrollmentRouter);
+app.use('/api/progress', lessonProgress);
 app.use('/api/users', userRouter);
 
 app.use(/(.*)/, (req, res, next) => {

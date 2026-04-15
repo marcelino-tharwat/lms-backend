@@ -32,4 +32,7 @@ const lessonProgressSchema = new mongoose.Schema(
 
 lessonProgressSchema.index({ user: 1, lesson: 1 }, { unique: true });
 
+lessonProgressSchema.pre(/^find/, function () {
+  this.select('-__v');
+});
 export default mongoose.model('LessonProgress', lessonProgressSchema);

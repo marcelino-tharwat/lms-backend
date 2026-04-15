@@ -24,4 +24,8 @@ const enrollmentSchema = new mongoose.Schema(
 
 enrollmentSchema.index({ user: 1, course: 1 }, { unique: true });
 
+enrollmentSchema.pre(/^find/, function () {
+  this.select('-__v');
+});
+
 export default mongoose.model('Enrollment', enrollmentSchema);

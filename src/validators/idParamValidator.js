@@ -1,7 +1,11 @@
 import { param } from 'express-validator';
 import validatorMiddleware from '../middleware/validatorMiddleware.js';
 
-export const idParamValidator = [
-  param('id').notEmpty().withMessage('missing param').isMongoId().withMessage('Invalid ID format'),
+export const idParamValidator = (paramName = 'id') => [
+  param(paramName)
+    .notEmpty()
+    .withMessage(`missing ${paramName} param`)
+    .isMongoId()
+    .withMessage(`Invalid ${paramName} format`),
   validatorMiddleware,
 ];

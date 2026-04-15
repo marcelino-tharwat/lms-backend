@@ -11,6 +11,7 @@ import {
   getStudentsByCourse,
   setUserToBody,
 } from '../controllers/enrollmentController.js';
+import { idParamValidator } from '../validators/idParamValidator.js';
 
 const enrollmentRouter = Router();
 
@@ -21,6 +22,7 @@ enrollmentRouter.get(
   '/course/:courseId/students',
   protect,
   restrictTo('instructor', 'admin'),
+  idParamValidator('courseId'),
   checkInstructorOwnsCourse,
   getStudentsByCourse
 );
