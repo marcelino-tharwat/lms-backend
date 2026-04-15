@@ -33,17 +33,17 @@ npm run dev
 
 ## Project Structure
 
-src/: Core application source code  
+`src/:` Core application source code  
 
-controllers/: Handle incoming requests and business logic  
-models/: Define Mongoose schemas and database models  
-routes/: Register and organize API endpoints  
-middlewares/: Custom middleware for auth, errors, etc.  
-validations/: Input validation schemas and rules  
-utils/: Shared helper functions and utilities  
+`controllers/:` Handle incoming requests and business logic  
+`models/:` Define Mongoose schemas and database models  
+`routes/:` Register and organize API endpoints  
+`middlewares/:` Custom middleware for auth, errors, etc.  
+`validations/:` Input validation schemas and rules  
+`utils/:` Shared helper functions and utilities  
 
-app.js: Configure Express app and global middleware  
-server.js: Initialize server and connect to database  
+`app.js:` Configure Express app and global middleware  
+`server.js:` Initialize server and connect to database  
 
 ## Features
 
