@@ -21,20 +21,17 @@ export const getProgressCourse = catchAsync(async (req, res, next) => {
     completed: true,
   });
 
-  const completedLessonIds = completedLessons.map(LId => LId._id);
+  const completedLessonIds = completedLessons.map(doc => String(doc.lesson));
 
   const course = await Course.findById(req.params.courseId);
-  if (!course) next(new AppError('Not found Course', 404));
+  if (!course) return next(new AppError('Not found Course', 404));
 
   const totalLessons = course.lessonsCount;
 
   const progressPercentage =
-    totalLessons === 0 ? 0 : Math.round((completedLessons / totalLessons) * 100);
-
-  console.log(completedLessons);
+    totalLessons === 0 ? 0 : Math.round((completedLessons.length / totalLessons) * 100);
 
   res.status(200).json({
-    courseId: req.params.course,
     completedLessons: completedLessons.length,
     totalLessons,
     progressPercentage,
@@ -231,7 +228,27 @@ export const getInstructorDashboard = async (req, res, _next) => {
   });
 };
 
-export const createLessonProgres = handellerFactory.createOne(LessonProgress);
+export const createLessonProgres = async (req, res) => {
+  try {
+    const { lessonId } = req.params;
+    const userId = req.user._id;
+
+    const progress = await LessonProgress.findOneAndUpdate(
+      { user: userId, lesson: lessonId },
+      {
+        completed: true,
+        completedAt: Date.now(),
+        course: req.body.course,
+      },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    res.status(200).json({ status: 'success', data: progress });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getLessonProgres = handellerFactory.getOne(LessonProgress);
 export const updateLessonProgres = handellerFactory.updateOne(LessonProgress);
 export const deleteLessonProgres = handellerFactory.deleteOne(LessonProgress);

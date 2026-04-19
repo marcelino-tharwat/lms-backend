@@ -84,6 +84,9 @@ courseShema.pre(/^find/, function () {
   this.select('-__v').populate({ path: 'category', select: '-__v -_id' });
 });
 
+courseShema.pre(/^find/, function () {
+  this.select('-__v').populate({ path: 'instructor', select: '-role -email' });
+});
 const Course = mongoose.model('Course', courseShema);
 
 export default Course;

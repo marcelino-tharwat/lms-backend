@@ -21,7 +21,7 @@ courseRouter
 
 courseRouter
   .route('/:id')
-  .get(idParamValidator, courseController.getCourse)
+  .get(courseController.getCourse)
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),

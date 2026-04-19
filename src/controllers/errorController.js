@@ -41,7 +41,7 @@ export default (error, req, res, _next) => {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    // console.error(error);
+    console.error(error);
     if (error.code === 11000) error = handleDuplicateError(error);
     if (error.name === 'CastError') error = handleCastError(error);
     if (error.name === 'ValidationError') error = handleValidationError(error);

@@ -8,10 +8,11 @@ import {
   updatePasswordValidator,
 } from '../validators/userValidator.js';
 import { idParamValidator } from '../validators/idParamValidator.js';
+import { uploadUserPhoto } from '../middleware/uploadMiddleware.js';
 
 const userRouter = express.Router();
 
-userRouter.route('/signup').post(signupValidator, authController.signup);
+userRouter.route('/signup').post(signupValidator, uploadUserPhoto, authController.signup);
 userRouter.route('/login').post(loginValidator, authController.login);
 userRouter.route('/logout').post(authController.logout);
 userRouter.route('/refresh').post(authController.refresh);
