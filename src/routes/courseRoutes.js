@@ -25,7 +25,7 @@ courseRouter
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
-    idParamValidator,
+    idParamValidator(),
     updateCourseValidator,
     courseController.filterCourseBody,
     courseController.updateCourse
@@ -33,7 +33,7 @@ courseRouter
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
-    idParamValidator,
+    ...idParamValidator(),
     courseController.deleteCourse
   );
 

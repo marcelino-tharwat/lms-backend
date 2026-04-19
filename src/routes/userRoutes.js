@@ -35,8 +35,8 @@ userRouter.route('/').get(userController.getAllUser).post(userController.createU
 
 userRouter
   .route('/:id')
-  .get(idParamValidator, userController.getUser)
-  .patch(idParamValidator, userController.updateUser)
-  .delete(idParamValidator, userController.deleteUser);
+  .get(idParamValidator(), userController.getUser)
+  .patch(idParamValidator(), userController.updateUser)
+  .delete(idParamValidator(), userController.deleteUser);
 
 export default userRouter;

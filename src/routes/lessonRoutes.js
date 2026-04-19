@@ -18,18 +18,18 @@ lessonRouter
 
 lessonRouter
   .route('/:id')
-  .get(idParamValidator, lessonController.getLesson)
+  .get(idParamValidator(), lessonController.getLesson)
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
-    idParamValidator,
+    idParamValidator(),
     updateLessonValidator,
     lessonController.updateLesson
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
-    idParamValidator,
+    idParamValidator(),
     lessonController.deleteLesson
   );
 

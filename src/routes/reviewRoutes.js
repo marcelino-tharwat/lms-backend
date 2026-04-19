@@ -22,6 +22,6 @@ reivewRouter
   .route('/:id')
   .get(getReivew)
   .patch(protect, restrictTo('user'), checkReviewOwner, checkDuplicateReview, updateReivew)
-  .delete(protect, restrictTo('user', 'admin'), deleteReivew);
+  .delete(protect, restrictTo('user', 'admin'), checkReviewOwner, deleteReivew);
 
 export default reivewRouter;

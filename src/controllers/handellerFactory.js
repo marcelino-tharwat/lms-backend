@@ -58,9 +58,11 @@ export const updateOne = Model => {
 
 export const deleteOne = Model => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
+    const doc = req.review || (await Model.findByIdAndDelete(req.params.id));
     if (!doc) return next(new AppError('No document found with that ID', 404));
-
+    if (!req.review) {
+      await doc.deleteOne();
+    }
     res.status(204).json({ status: 'Success', data: { tour: null } });
   });
 };
