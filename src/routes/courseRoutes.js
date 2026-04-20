@@ -4,7 +4,8 @@ import * as authController from './../controllers/authController.js';
 import { createCourseValidator, updateCourseValidator } from '../validators/courseValidator.js';
 import { idParamValidator } from '../validators/idParamValidator.js';
 import reivewRouter from './reviewRoutes.js';
-
+import { checkInstructorOwnsCourse } from '../middleware/checkInstructorOwnsCourse.js';
+import { uploadCourseImage } from '../middleware/uploadCoverCourse.js';
 const courseRouter = express.Router();
 
 courseRouter.use('/:courseId/review', reivewRouter);
@@ -15,6 +16,7 @@ courseRouter
   .post(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
+    uploadCourseImage,
     createCourseValidator,
     courseController.createCourse
   );
@@ -24,8 +26,9 @@ courseRouter
   .get(courseController.getCourse)
   .patch(
     authController.protect,
-    authController.restrictTo('admin', 'instructor'),
+    authController.restrictTo('instructor'),
     idParamValidator(),
+    checkInstructorOwnsCourse,
     updateCourseValidator,
     courseController.filterCourseBody,
     courseController.updateCourse

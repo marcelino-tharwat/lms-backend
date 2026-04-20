@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, 'please provide password!'],
     minlength: 8,
-    select: false,
+    // select: false,
   },
   passwordConfirm: {
     type: String,
@@ -59,9 +59,9 @@ userSchema.pre(/^find/, function () {
   this.find({ active: { $ne: false } });
 });
 
-userSchema.pre(/^find/, function () {
-  this.select('-__v');
-});
+// userSchema.pre(/^find/, function () {
+//   this.select('-__v');
+// });
 
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);

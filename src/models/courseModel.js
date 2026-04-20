@@ -43,8 +43,8 @@ const courseShema = new mongoose.Schema(
       type: String,
       required: [true, 'A course must have a level'],
       enum: {
-        values: ['beginner', 'intermediate', 'advanced'],
-        message: 'Level is either: beginner, intermediate, advanced',
+        values: ['beginner', 'intermediate', 'advanced', 'all'],
+        message: 'Level is either: beginner, intermediate, advanced and all',
       },
     },
     price: {
@@ -81,7 +81,7 @@ courseShema.virtual('reviews', {
 });
 
 courseShema.pre(/^find/, function () {
-  this.select('-__v').populate({ path: 'category', select: '-__v -_id' });
+  this.select('-__v').populate({ path: 'category', select: '-__v ' });
 });
 
 courseShema.pre(/^find/, function () {

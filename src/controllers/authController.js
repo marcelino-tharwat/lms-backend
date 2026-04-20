@@ -53,7 +53,8 @@ export const login = catchAsync(async (req, res, next) => {
   if (!email || !password) return next(new AppError('Please provide email and password!', 400));
 
   const user = await User.findOne({ email }).select('+password');
-
+  console.log('PASSWORD INPUT:', password);
+  console.log('USER PASSWORD:', user.password);
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect password or email', 401));
   }

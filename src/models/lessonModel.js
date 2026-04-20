@@ -7,8 +7,8 @@ const lessonShema = mongoose.Schema({
     required: [true, 'A lesson must have a title'],
     unique: true,
     trim: true,
-    maxlength: [20, 'A lesson name must have less or equal then 50 characters'],
-    minlength: [3, 'A lesson name must have more or equal then 10 characters'],
+    maxlength: [80, 'A lesson name must have less or equal then 80 characters'],
+    minlength: [3, 'A lesson name must have more or equal then 3 characters'],
   },
   description: {
     type: String,

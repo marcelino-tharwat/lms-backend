@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start:dev": "nodemon server.js",
-    "start:prod": "cross-env NODE_ENV=production nodemon server.js"
+    "start:prod": "cross-env NODE_ENV=production nodemon server.js",
+    "import-data": "node src/data/import-dev-data.js --import",
+    "delete-data": "node src/data/import-dev-data.js --delete"
   },
   "keywords": [],
   "author": "",

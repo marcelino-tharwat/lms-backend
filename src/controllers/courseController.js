@@ -1,5 +1,7 @@
 import Course from '../models/courseModel.js';
 import * as handellerFactory from '../controllers/handellerFactory.js';
+import catchAsync from '../utils/catchAsync.js';
+// import ApiFeature from '../utils/apiFeature.js';
 
 export const filterCourseBody = (req, res, next) => {
   const allowedFields = [
@@ -27,6 +29,18 @@ export const filterCourseBody = (req, res, next) => {
 
 export const getAllcourses = handellerFactory.getAll(Course);
 export const getCourse = handellerFactory.getOne(Course, { path: 'lessons reviews' });
-export const createCourse = handellerFactory.createOne(Course);
+export const createCourse = catchAsync(async (req, res, _next) => {
+  if (req.file) {
+    req.body.imageCover = req.file.filename;
+  }
+  console.log('Body: ', req.body);
+  console.log('File: ', req.file);
+  const doc = await Course.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: { data: doc },
+  });
+});
 export const updateCourse = handellerFactory.updateOne(Course);
 export const deleteCourse = handellerFactory.deleteOne(Course);

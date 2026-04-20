@@ -2,11 +2,16 @@ import Course from '../models/courseModel.js';
 import AppError from '../utils/appError.js';
 
 export const checkInstructorOwnsCourse = async (req, res, next) => {
-  const course = await Course.findById(req.params.courseId);
+  const id = req.params.courseId || req.params.id;
+  const course = await Course.findById(id);
   if (!course) {
     return next(new AppError('Course not found', 404));
   }
-  if (course.instructor.toString() !== req.user._id.toString()) {
+
+  console.log(course.instructor._id.toString());
+  console.log(req.user._id.toString());
+
+  if (course.instructor._id.toString() !== req.user._id.toString()) {
     return next(new AppError('Not authorized', 403));
   }
 

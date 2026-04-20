@@ -76,7 +76,8 @@ reviewSchema.post('save', function () {
 // Befor DB
 reviewSchema.pre(/^findOneAnd/, async function () {
   // get review by id before arrive DB
-  this.r = await this.findOne();
+  // this.r = await this.findOne();
+  this.r = await this.model.findOne(this.getQuery());
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {

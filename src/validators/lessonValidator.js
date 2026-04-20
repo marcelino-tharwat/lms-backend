@@ -7,8 +7,8 @@ export const createLessonValidator = [
     .notEmpty()
     .withMessage('Lesson title is required')
     .trim()
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Title must be between 3 and 20 characters')
+    .isLength({ min: 3, max: 80 })
+    .withMessage('Title must be between 3 and 80 characters')
     .escape(),
 
   body('description').optional().trim().escape(),

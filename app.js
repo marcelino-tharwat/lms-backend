@@ -10,6 +10,9 @@ import lessonProgress from './src/routes/lessonProgressRoutes.js';
 import userRouter from './src/routes/userRoutes.js';
 import globalErrorHandeler from './src/controllers/errorController.js';
 import AppError from './src/utils/appError.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const app = express();
 
 console.log('NODE_ENV =', process.env.NODE_ENV);
@@ -20,7 +23,10 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/uploads', express.static('uploads'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // routes
 app.use('/api/courses', courseRouter);
 app.use('/api/categories', categoryRouter);

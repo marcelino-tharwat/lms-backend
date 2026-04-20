@@ -40,8 +40,12 @@ export const createCourseValidator = [
     .matches(/^[0-9]+(\.[0-9]{1,2})? (hours|days|weeks)$/)
     .withMessage('Duration must be in format: "10 hours", "2.5 days", etc.'),
 
-  body('imageCover').notEmpty().withMessage('A course must have a cover image'),
-
+  body('imageCover').custom((value, { req }) => {
+    if (!req.file) {
+      throw new Error('A course must have a cover image');
+    }
+    return true; // كدا هو اتأكد إن فيه ملف اترفع فعلاً
+  }),
   validatorMiddleware,
 ];
 
