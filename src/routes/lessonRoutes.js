@@ -3,6 +3,7 @@ import * as lessonController from '../controllers/lessonController.js';
 import * as authController from '../controllers/authController.js';
 import { createLessonValidator, updateLessonValidator } from '../validators/lessonValidator.js';
 import { idParamValidator } from '../validators/idParamValidator.js';
+import { checkInstructorOwnsLesson } from '../middleware/checkInstructorOwnLesson.js';
 
 const lessonRouter = express.Router();
 
@@ -30,6 +31,7 @@ lessonRouter
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
     idParamValidator(),
+    checkInstructorOwnsLesson,
     lessonController.deleteLesson
   );
 

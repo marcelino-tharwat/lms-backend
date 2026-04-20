@@ -67,5 +67,9 @@ lessonShema.post(/^findOneAnd/, async function () {
   }
 });
 
+lessonShema.post('deleteOne', { document: true, query: false }, async function () {
+  await this.constructor.calcLessonsCount(this.course);
+});
+
 const Lesson = mongoose.model('Lesson', lessonShema);
 export default Lesson;
