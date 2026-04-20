@@ -59,6 +59,7 @@ export const updateOne = Model => {
 export const deleteOne = Model => {
   return catchAsync(async (req, res, next) => {
     const doc = req.review || req.lesson || (await Model.findByIdAndDelete(req.params.id));
+    console.log(doc);
     if (!doc) return next(new AppError('No document found with that ID', 404));
     if (!req.review) {
       await doc.deleteOne();

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Lesson from './lessonModel.js';
 
 const courseShema = new mongoose.Schema(
   {
@@ -84,9 +85,14 @@ courseShema.pre(/^find/, function () {
   this.select('-__v').populate({ path: 'category', select: '-__v ' });
 });
 
+courseShema.pre('deleteOne', { document: true, query: false }, async function () {
+  await Lesson.deleteMany({ course: this._id });
+});
+
 courseShema.pre(/^find/, function () {
   this.select('-__v').populate({ path: 'instructor', select: '-role -email' });
 });
+
 const Course = mongoose.model('Course', courseShema);
 
 export default Course;

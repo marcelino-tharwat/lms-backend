@@ -37,6 +37,7 @@ courseRouter
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
     ...idParamValidator(),
+    checkInstructorOwnsCourse,
     courseController.deleteCourse
   );
 
