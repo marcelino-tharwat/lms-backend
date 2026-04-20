@@ -27,6 +27,7 @@ courseRouter
   .patch(
     authController.protect,
     authController.restrictTo('instructor'),
+    uploadCourseImage,
     idParamValidator(),
     checkInstructorOwnsCourse,
     updateCourseValidator,

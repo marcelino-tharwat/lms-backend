@@ -8,7 +8,9 @@ export const checkInstructorOwnsCourse = async (req, res, next) => {
   if (!course) {
     return next(new AppError('Course not found', 404));
   }
-
+  console.log('///');
+  console.log(course.instructor._id.toString());
+  console.log(req.user._id.toString());
   if (course.instructor._id.toString() !== req.user._id.toString()) {
     return next(new AppError('Not authorized', 403));
   }

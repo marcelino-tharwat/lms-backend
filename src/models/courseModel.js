@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Lesson from './lessonModel.js';
-
+import Enrollment from './enrollmentModel.js';
 const courseShema = new mongoose.Schema(
   {
     title: {
@@ -87,6 +87,7 @@ courseShema.pre(/^find/, function () {
 
 courseShema.pre('deleteOne', { document: true, query: false }, async function () {
   await Lesson.deleteMany({ course: this._id });
+  await Enrollment.deleteMany({ course: this._id });
 });
 
 courseShema.pre(/^find/, function () {

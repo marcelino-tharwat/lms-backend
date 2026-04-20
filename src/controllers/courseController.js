@@ -3,6 +3,30 @@ import * as handellerFactory from '../controllers/handellerFactory.js';
 import catchAsync from '../utils/catchAsync.js';
 // import ApiFeature from '../utils/apiFeature.js';
 
+// export const filterCourseBody = (req, res, next) => {
+//   const allowedFields = [
+//     'title',
+//     'description',
+//     'price',
+//     'category',
+//     'level',
+//     'imageCover',
+//     'duration',
+//     'instructor',
+//   ];
+
+//   const filteredBody = {};
+
+//   Object.keys(req.body).forEach(el => {
+//     if (allowedFields.includes(el)) {
+//       filteredBody[el] = req.body[el];
+//     }
+//   });
+
+//   req.body = filteredBody;
+//   next();
+// };
+
 export const filterCourseBody = (req, res, next) => {
   const allowedFields = [
     'title',
@@ -10,7 +34,6 @@ export const filterCourseBody = (req, res, next) => {
     'price',
     'category',
     'level',
-    'imageCover',
     'duration',
     'instructor',
   ];
@@ -18,10 +41,16 @@ export const filterCourseBody = (req, res, next) => {
   const filteredBody = {};
 
   Object.keys(req.body).forEach(el => {
-    if (allowedFields.includes(el)) {
+    // ❌ امنع imageCover من body
+    if (allowedFields.includes(el) && el !== 'imageCover') {
       filteredBody[el] = req.body[el];
     }
   });
+
+  // ✅ الصورة تيجي بس من multer
+  if (req.file) {
+    filteredBody.imageCover = req.file.filename;
+  }
 
   req.body = filteredBody;
   next();

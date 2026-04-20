@@ -182,16 +182,20 @@ export const protect = catchAsync(async (req, res, next) => {
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(new AppError('User recently changed password! please log in again.', 401));
   }
-
+  console.log('protect');
   req.user = currentUser;
   next();
 });
 
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
+    console.log(roles);
+    console.log('------------------' + req.user.role);
+
     if (!roles.includes(req.user.role)) {
       return next(new AppError('You do not have permission to perform this action', 403));
     }
+    console.log('------------------' + req.user.role);
     next();
   };
 };
