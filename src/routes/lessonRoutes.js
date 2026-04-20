@@ -9,7 +9,7 @@ const lessonRouter = express.Router();
 
 lessonRouter
   .route('/')
-  .get(lessonController.getAllLesson)
+  .get(authController.protect, authController.restrictTo('admin'), lessonController.getAllLesson)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'instructor'),
