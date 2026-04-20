@@ -7,6 +7,9 @@ export const checkInstructorOwnsLesson = async (req, res, next) => {
 
   const lesson = await Lesson.findById(id);
 
+  if (!lesson) {
+    return next(new AppError('lesson not found', 404));
+  }
   const course = await Course.findById(lesson.course);
 
   if (!course) {
